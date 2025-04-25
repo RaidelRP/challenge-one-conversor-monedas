@@ -2,6 +2,7 @@ import com.alura.challenge.conversor.Cambio;
 import com.alura.challenge.conversor.Consulta;
 import com.alura.challenge.conversor.Monedas;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Principal {
@@ -34,32 +35,36 @@ public class Principal {
         System.out.println("**********************************");
         System.out.println("Bienvenido al Conversor de monedas");
         menu();
-        opcion = scanner.nextInt();
-        while (opcion != 0) {
-            switch (opcion) {
-                case 1:
-                    convertirMonedas();
-                    break;
-                case 2:
-                    menu2();
-                    break;
-                case 3:
-                    System.out.println("**********************************");
-                    System.out.println("Introduzca el código de la nueva moneda a consultar: ");
-                    String codigo = scanner.next();
-                    monedas.agregarMoneda(codigo);
-                    break;
-                case 0:
-                    System.out.println("**********************************");
-                    System.out.println("Finalizando programa");
-                    break;
-                default:
-                    System.out.println("**********************************");
-                    System.out.println("La opción no es correcta");
-                    break;
-            }
-            System.out.println("Digite una nueva opción para continuar:");
+        try {
             opcion = scanner.nextInt();
+            while (opcion != 0) {
+                switch (opcion) {
+                    case 1:
+                        convertirMonedas();
+                        break;
+                    case 2:
+                        menu2();
+                        break;
+                    case 3:
+                        System.out.println("**********************************");
+                        System.out.println("Introduzca el código de la nueva moneda a consultar: ");
+                        String codigo = scanner.next();
+                        monedas.agregarMoneda(codigo);
+                        break;
+                    case 0:
+                        System.out.println("**********************************");
+                        System.out.println("Finalizando programa");
+                        break;
+                    default:
+                        System.out.println("**********************************");
+                        System.out.println("La opción no es correcta");
+                        break;
+                }
+                menu();
+                opcion = scanner.nextInt();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Ha ocurrido un error al introducir los datos.\n\t" + e.getMessage());
         }
         System.out.println("**********************************");
         System.out.println("Finalizando programa");
@@ -70,16 +75,25 @@ public class Principal {
         System.out.println("**********************************");
         System.out.println("Seleccione la moneda que quiere convertir: ");
         menu1();
-        int opcionMonedaOrigen = scanner.nextInt();
-        String monedaOrigen = monedas.obtenerMoneda(opcionMonedaOrigen - 1);
+        int opcionMonedaOrigen, opcionMonedaDestino;
+        opcionMonedaOrigen = scanner.nextInt();
         System.out.println("Seleccione la moneda que quiere obtener: ");
         menu1();
-        int opcionMonedaDestino = scanner.nextInt();
-        String monedaDestino = monedas.obtenerMoneda(opcionMonedaDestino - 1);
-        System.out.println("Introduzca la cantidad de " + monedaOrigen + " a convertir: ");
-        double cantidad = scanner.nextInt();
-        Consulta consulta = new Consulta(monedaOrigen, monedaDestino);
-        Cambio cambio = consulta.realizarConsulta();
-        System.out.println(cambio.resultadoDeConversion(cantidad));
+        opcionMonedaDestino = scanner.nextInt();
+        try {
+            String monedaOrigen = monedas.obtenerMoneda(opcionMonedaOrigen - 1);
+            String monedaDestino = monedas.obtenerMoneda(opcionMonedaDestino - 1);
+            System.out.println("Introduzca la cantidad de " + monedaOrigen + " a convertir: ");
+            double cantidad = scanner.nextInt();
+            Consulta consulta = new Consulta(monedaOrigen, monedaDestino);
+            Cambio cambio = consulta.realizarConsulta();
+            if (cambio != null && cambio.result().equals("success")) {
+                System.out.println(cambio.resultadoDeConversion(cantidad));
+            } else {
+                System.out.println("No se ha podido realizar la conversión. \nEs posible que alguna de las monedas a convertir no esté disponible");
+            }
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Una de las opciones de moneda seleccionada (" + opcionMonedaOrigen + " o " + opcionMonedaDestino + ") no está disponible");
+        }
     }
 }
