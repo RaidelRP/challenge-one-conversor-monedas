@@ -2,6 +2,8 @@ import com.alura.challenge.conversor.Cambio;
 import com.alura.challenge.conversor.Consulta;
 import com.alura.challenge.conversor.Monedas;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -12,7 +14,6 @@ import java.util.Scanner;
 public class Principal {
     public static Monedas monedas = new Monedas();
     public static Scanner scanner = new Scanner(System.in);
-//    public static FileWriter writer;
 
     public static void menu() {
         System.out.println("**********************************");
@@ -20,6 +21,7 @@ public class Principal {
         System.out.println("1. Consultar un cambio");
         System.out.println("2. Consultar listado de monedas disponibles");
         System.out.println("3. Agregar nueva moneda para consultar cambio");
+        System.out.println("4. Ver historial de conversiones");
         System.out.println("0. Salir");
     }
 
@@ -66,10 +68,9 @@ public class Principal {
     public static void main(String[] args) {
         int opcion;
         FileWriter writer;
+        BufferedReader reader;
 
         try {
-            writer = new FileWriter("historial.txt", true);
-
             System.out.println("**********************************");
             System.out.println("Bienvenido al Conversor de monedas");
             menu();
@@ -80,10 +81,12 @@ public class Principal {
                     case 1:
                         String resultado = convertirMonedas();
                         if (!resultado.isEmpty()) {
+                            writer = new FileWriter("historial.txt", true);
                             LocalDateTime hora = LocalDateTime.now(); // Obtener fecha actual
                             String horaFormateada = hora.format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));  //Dar formato a fecha
 
                             writer.write("\n" + horaFormateada + " => " + resultado);
+                            writer.close();
                         }
                         break;
                     case 2:
@@ -94,6 +97,15 @@ public class Principal {
                         System.out.println("Introduzca el código de la nueva moneda a convertir: ");
                         String codigo = scanner.next();
                         monedas.agregarMoneda(codigo);
+                        break;
+                    case 4:
+                        System.out.println("**********************************");
+                        System.out.println("Historial de conversiones");
+                        reader = new BufferedReader(new FileReader("historial.txt"));
+                        String linea;
+                        while ((linea = reader.readLine()) != null) {
+                            System.out.println(linea);
+                        }
                         break;
                     case 0:
                         System.out.println("**********************************");
@@ -107,7 +119,6 @@ public class Principal {
                 menu();
                 opcion = scanner.nextInt();
             }
-            writer.close();
         } catch (InputMismatchException e) {
             System.out.println("Ha ocurrido un error al introducir los datos.\n\t" + e.getMessage());
         } catch (IOException e) {
