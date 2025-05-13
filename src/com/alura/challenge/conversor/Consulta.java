@@ -12,9 +12,7 @@ import java.net.http.HttpResponse;
 import java.util.Properties;
 
 public class Consulta {
-    private final HttpRequest request;
-    private final HttpClient client;
-    private final HttpResponse<String> response;
+    private HttpResponse<String> response;
 
     public Consulta(String monedaOrigen, String monedaDestino) {
         Properties config = new Properties();
@@ -26,12 +24,12 @@ public class Consulta {
             String key = config.getProperty("API_KEY");
 
             String direccion = "https://v6.exchangerate-api.com/v6/" + key + "/pair/" + monedaOrigen + "/" + monedaDestino;
-            client = HttpClient.newHttpClient();
-            request = HttpRequest.newBuilder().uri(URI.create(direccion)).build();
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder().uri(URI.create(direccion)).build();
 
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            System.out.println("Ha ocurrido un error: " + e.getMessage());
         }
     }
 

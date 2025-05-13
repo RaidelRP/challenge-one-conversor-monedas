@@ -26,6 +26,11 @@ public class Monedas {
     }
 
     public String obtenerMoneda(int indice) {
-        return monedas.get(indice);
+        try {
+            return monedas.get(indice);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("No se puede acceder al indice");
+            return null;
+        }
     }
 }

@@ -97,6 +97,7 @@ public class Principal {
                         System.out.println("Introduzca el código de la nueva moneda a convertir: ");
                         String codigo = scanner.next();
                         monedas.agregarMoneda(codigo);
+                        menu2();
                         break;
                     case 4:
                         System.out.println("**********************************");
@@ -106,10 +107,6 @@ public class Principal {
                         while ((linea = reader.readLine()) != null) {
                             System.out.println(linea);
                         }
-                        break;
-                    case 0:
-                        System.out.println("**********************************");
-                        System.out.println("Finalizando programa");
                         break;
                     default:
                         System.out.println("**********************************");
